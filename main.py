@@ -4,6 +4,53 @@ import sqlite3 as sql
 from tkinter import *
 from tkinter import messagebox
 
+# Insert a row of data
+def add_notes():
+    # Get input values
+    today = date_entry.get()
+    notes_title = notes_title_entry.get()
+    notes = notes_entry.get("1.0", "end-1c")
+    # Raise a prompt for missing values
+    if (len(today) <= 0) & (len(notes_title) <= 0) & (len(notes) <= 1):
+        messagebox.showerror(message="ENTER REQUIRED DETAILS")
+    else:
+        # Insert into the table
+        cur.execute("INSERT INTO notes_table VALUES ('%s','%s','%s')" % (today, notes_title, notes))
+        messagebox.showinfo(message="Note added")
+        # Commit to preserve the changes
+        con.commit()
+
+
+# Display all the notes
+def view_notes():
+    # Obtain all the user input
+    date = date_entry.get()
+    notes_title = notes_title_entry.get()
+    # If no input is given, retrieve all notes
+    if (len(date) <= 0) & (len(notes_title) <= 0):
+        sql_statement = "SELECT * FROM notes_table"
+
+    # Retrieve notes matching a title
+    elif (len(date) <= 0) & (len(notes_title) > 0):
+        sql_statement = "SELECT * FROM notes_table where notes_title ='%s'" % notes_title
+    # Retrieve notes matching a date
+    elif (len(date) > 0) & (len(notes_title) <= 0):
+        sql_statement = "SELECT * FROM notes_table where date ='%s'" % date
+    # Retrieve notes matching the date and title
+    else:
+        sql_statement = "SELECT * FROM notes_table where date ='%s' and notes_title ='%s'" % (date, notes_title)
+
+    # Execute the query
+    cur.execute(sql_statement)
+    # Obtain all the contents of the query
+    row = cur.fetchall()
+    # Check if none was retrieved
+    if len(row) <= 0:
+        messagebox.showerror(message="No note found")
+    else:
+        # Print the notes
+        for i in row:
+            messagebox.showinfo(message="Date: " + i[0] + "\nTitle: " + i[1] + "\nNotes: " + i[2])
 
 
 # Invoke call to class to view a window
