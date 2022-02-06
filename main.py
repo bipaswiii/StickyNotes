@@ -52,6 +52,23 @@ def view_notes():
         for i in row:
             messagebox.showinfo(message="Date: " + i[0] + "\nTitle: " + i[1] + "\nNotes: " + i[2])
 
+# Update the notes
+def update_notes():
+    # Obtain user input
+    today = date_entry.get()
+    notes_title = notes_title_entry.get()
+    notes = notes_entry.get("1.0", "end-1c")
+    # Check if input is given by the user
+    if (len(today) <= 0) & (len(notes_title) <= 0) & (len(notes) <= 1):
+        messagebox.showerror(message="ENTER REQUIRED DETAILS")
+    # update the note
+    else:
+        sql_statement = "UPDATE notes_table SET notes = '%s' where date ='%s' and notes_title ='%s'" % (
+        notes, today, notes_title)
+
+    cur.execute(sql_statement)
+    messagebox.showinfo(message="Note Updated")
+    con.commit()
 
 # Invoke call to class to view a window
 window = Tk()
