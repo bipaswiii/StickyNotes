@@ -3,7 +3,14 @@
 import sqlite3 as sql
 from tkinter import *
 from tkinter import messagebox
-
+# Create database connection and connect to table
+try:
+    con = sql.connect('pin_your_note.db')
+    cur = con.cursor()
+    cur.execute('''CREATE TABLE notes_table
+                         (date text, notes_title text, notes text)''')
+except:
+    print("Connected to table of database")
 # Insert a row of data
 def add_notes():
     # Get input values
