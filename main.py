@@ -3,6 +3,7 @@
 import sqlite3 as sql
 from tkinter import *
 from tkinter import messagebox
+
 # Create database connection and connect to table
 try:
     con = sql.connect('pin_your_note.db')
@@ -11,6 +12,8 @@ try:
                          (date text, notes_title text, notes text)''')
 except:
     print("Connected to table of database")
+
+
 # Insert a row of data
 def add_notes():
     # Get input values
@@ -59,6 +62,31 @@ def view_notes():
         for i in row:
             messagebox.showinfo(message="Date: " + i[0] + "\nTitle: " + i[1] + "\nNotes: " + i[2])
 
+
+# Delete the notes
+def delete_notes():
+    # Obtain input values
+    date = date_entry.get()
+    notes_title = notes_title_entry.get()
+    # Ask if user wants to delete all notes
+    choice = messagebox.askquestion(message="Do you want to delete all notes?")
+    # If yes is selected, delete all
+    if choice == 'yes':
+        sql_statement = "DELETE FROM notes_table"
+    else:
+        # Delete notes matching a particular date and title
+        if (len(date) <= 0) & (len(notes_title) <= 0):
+            # Raise error for no inputs
+            messagebox.showerror(message="ENTER REQUIRED DETAILS")
+            return
+        else:
+            sql_statement = "DELETE FROM notes_table where date ='%s' and notes_title ='%s'" % (date, notes_title)
+    # Execute the query
+    cur.execute(sql_statement)
+    messagebox.showinfo(message="Note(s) Deleted")
+    con.commit()
+
+
 # Update the notes
 def update_notes():
     # Obtain user input
@@ -76,6 +104,7 @@ def update_notes():
     cur.execute(sql_statement)
     messagebox.showinfo(message="Note Updated")
     con.commit()
+
 
 # Invoke call to class to view a window
 window = Tk()
